@@ -14,6 +14,8 @@
       --card-light: rgba(255, 255, 255, 0.9);
       --card-dark: rgba(45, 45, 45, 0.92);
       --shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+      --text-light: #333;
+      --text-dark: #eee;
     }
 
     /* --- LOADING ANIMATION --- */
@@ -23,6 +25,7 @@
       z-index: 9999; transition: opacity 0.6s ease, visibility 0.6s;
     }
     body.dark #loader { background: #121212; }
+    
     .spinner {
       width: 50px; height: 50px;
       border: 5px solid rgba(76, 175, 80, 0.1);
@@ -37,10 +40,10 @@
     body {
       font-family: 'Segoe UI', sans-serif;
       margin: 0; padding: 20px; display: flex; justify-content: center;
-      min-height: 100vh; background: var(--bg-light); color: #333;
-      transition: background 0.8s cubic-bezier(0.4, 0, 0.2, 1), color 0.5s;
+      min-height: 100vh; background: var(--bg-light); color: var(--text-light);
+      transition: background 0.5s ease, color 0.5s;
     }
-    body.dark { background: var(--bg-dark); color: #eee; }
+    body.dark { background: var(--bg-dark); color: var(--text-dark); }
 
     .container {
       width: 95%; max-width: 850px; padding: 30px;
@@ -49,59 +52,50 @@
       box-shadow: var(--shadow); position: relative; 
       transition: background 0.5s ease;
     }
+    body.dark .container { background: var(--card-dark); border-color: rgba(255,255,255,0.05); }
 
-    /* --- Layout สำหรับแถวเดียวกัน (แก้ไขใหม่) --- */
     .input-row { 
-      display: flex; 
-      flex-wrap: nowrap; /* บังคับให้อยู่แถวเดียวกัน */
-      gap: 10px; 
-      padding: 0 18px 12px; 
-      align-items: center;
+      display: flex; flex-wrap: nowrap; gap: 10px; 
+      padding: 0 18px 12px; align-items: center;
     }
 
     input {
-      min-width: 0; /* ป้องกัน input ดันขอบจอ */
-      flex: 1; 
-      padding: 12px 10px; 
-      border: 2px solid transparent; 
-      border-radius: 12px;
-      background: rgba(255,255,255,0.9); 
-      font-size: 14px; 
-      outline: none; 
-      transition: 0.3s;
+      min-width: 0; flex: 1; padding: 12px 10px; 
+      border: 2px solid transparent; border-radius: 12px;
+      background: rgba(255,255,255,0.9); font-size: 14px; 
+      outline: none; transition: 0.3s;
     }
-    /* ให้ช่องชื่อกว้างกว่าช่องอื่น */
     .mat-name-input { flex: 2 !important; }
 
-    body.dark input { background: #3d3d3d; color: white; }
+    body.dark input { background: #3d3d3d; color: white; border-color: #444; }
     input:focus { border-color: var(--primary); background: #fff; }
+    body.dark input:focus { background: #444; }
 
-    /* --- Buttons --- */
     button { 
       padding: 12px 20px; border: none; border-radius: 15px; 
       background: var(--primary); color: white; font-weight: 700; 
-      cursor: pointer; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      cursor: pointer; transition: all 0.3s;
       display: flex; align-items: center; justify-content: center;
     }
     button:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(76, 175, 80, 0.3); }
     button.delete { background: #ff4757; width: 40px; height: 40px; flex-shrink: 0; padding: 0; }
 
-    /* --- Others --- */
     .tutorial-btn { position: absolute; top: 20px; left: 20px; width: 45px; height: 45px; border-radius: 50%; }
-    .donate-btn { position: fixed; bottom: 30px; right: 30px; padding: 15px 25px; background: linear-gradient(45deg, #FFD700, #FFA500); color: #000; border-radius: 50px; text-decoration: none; z-index: 1000; animation: float 3s ease-in-out infinite; }
+    .donate-btn { position: fixed; bottom: 30px; right: 30px; padding: 15px 25px; background: linear-gradient(45deg, #FFD700, #FFA500); color: #000; border-radius: 50px; text-decoration: none; z-index: 1000; animation: float 3s ease-in-out infinite; font-weight: bold;}
     @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
 
     details { margin-bottom: 15px; border-radius: 18px; background: rgba(0,0,0,0.03); overflow: hidden; }
+    body.dark details { background: rgba(255,255,255,0.05); }
     summary { padding: 18px; list-style: none; cursor: pointer; display: flex; align-items: center; font-weight: 700; }
     .arrow-icon { font-size: 20px; color: var(--primary); margin-right: 12px; transition: 0.4s; }
     details[open] .arrow-icon { transform: rotate(90deg); }
 
-    #result { margin-top: 25px; padding: 25px; border-radius: 22px; background: #e8f5e9; }
+    #result { margin-top: 25px; padding: 25px; border-radius: 22px; background: #e8f5e9; transition: 0.3s; }
     body.dark #result { background: #2e2e2e; color: #81c784; }
 
     #tutorialModal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 2000; align-items: center; justify-content: center; }
     .modal-content { background: white; padding: 20px; border-radius: 24px; width: 90%; max-width: 600px; position: relative; }
-    body.dark .modal-content { background: #2a2a2a; }
+    body.dark .modal-content { background: #2a2a2a; color: white; }
   </style>
 </head>
 <body>
@@ -115,9 +109,9 @@
     <button class="tutorial-btn" onclick="openTutorial()">?</button>
     
     <div class="header-controls" style="display: flex; justify-content: flex-end; gap: 12px; margin-bottom: 20px;">
-      <div class="lang-select-wrapper" style="background: rgba(0,0,0,0.05); padding: 5px 10px; border-radius: 12px;">
-        <span>🌐</span>
-        <select id="langSelect" onchange="switchLang()">
+      <div class="lang-select-wrapper" style="background: rgba(0,0,0,0.05); padding: 5px 10px; border-radius: 12px; display: flex; align-items: center;">
+        <span style="margin-right: 5px;">🌐</span>
+        <select id="langSelect" onchange="switchLang()" style="background:transparent; border:none; outline:none; cursor:pointer; font-weight:bold; color: inherit;">
           <option value="th">ไทย</option>
           <option value="en">English</option>
         </select>
@@ -190,20 +184,36 @@
 
     let materialCount = 0;
 
+    // --- THEME LOGIC ---
     function applyTheme() {
       const mode = localStorage.getItem("theme") || "auto";
       const isSystemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      const t = texts[document.getElementById("langSelect").value];
+      const lang = document.getElementById("langSelect").value;
+      const t = texts[lang];
+      
       const shouldBeDark = mode === "dark" || (mode === "auto" && isSystemDark);
+      
       document.body.classList.toggle("dark", shouldBeDark);
-      document.getElementById("themeBtn").textContent = mode === "dark" ? t.darkMode : (mode === "light" ? t.lightMode : t.autoMode);
+      
+      // Update Button Label
+      let btnLabel = t.autoMode;
+      if(mode === "dark") btnLabel = t.darkMode;
+      if(mode === "light") btnLabel = t.lightMode;
+      document.getElementById("themeBtn").textContent = btnLabel;
     }
 
     function toggleDarkMode() {
-      const current = localStorage.getItem("theme") || "auto";
-      localStorage.setItem("theme", current === "auto" ? "dark" : (current === "dark" ? "light" : "auto"));
+      const modes = ["auto", "dark", "light"];
+      let current = localStorage.getItem("theme") || "auto";
+      let nextIndex = (modes.indexOf(current) + 1) % modes.length;
+      localStorage.setItem("theme", modes[nextIndex]);
       applyTheme();
     }
+
+    // Watch for system theme changes
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+      if (localStorage.getItem("theme") === "auto") applyTheme();
+    });
 
     function switchLang() {
       const lang = document.getElementById("langSelect").value;
@@ -217,7 +227,6 @@
       document.getElementById("resetBtn").textContent = t.reset;
       document.getElementById("donateText").textContent = t.donate;
       
-      // อัปเดต Placeholder ของวัตถุดิบปัจจุบันทั้งหมด
       document.querySelectorAll("#materials .input-row").forEach(row => {
         row.children[0].placeholder = t.matName;
         row.children[1].placeholder = t.matQty;
@@ -235,8 +244,6 @@
       const div = document.createElement("div");
       div.className = "input-row";
       div.id = "material-" + materialCount;
-      
-      // แก้ไขโครงสร้าง HTML ให้เรียงต่อกัน 4 ช่อง + ปุ่มลบ
       div.innerHTML = `
         <input type="text" class="mat-name-input" placeholder="${t.matName}" value="${name}" oninput="saveData()">
         <input type="number" placeholder="${t.matQty}" value="${qty}" oninput="calculate()">
@@ -310,6 +317,7 @@
 
     window.onload = function() {
       loadData();
+      applyTheme();
       setTimeout(() => { document.getElementById('loader').classList.add('loader-hidden'); }, 500);
     };
   </script>
