@@ -18,23 +18,7 @@
       --text-dark: #eee;
     }
 
-    #loader {
-      position: fixed; inset: 0; background: #fff; 
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      z-index: 9999; transition: opacity 0.6s ease, visibility 0.6s;
-    }
-    body.dark #loader { background: #121212; }
-    
-    .spinner {
-      width: 50px; height: 50px;
-      border: 5px solid rgba(76, 175, 80, 0.1);
-      border-top-color: var(--primary);
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .loader-hidden { opacity: 0; visibility: hidden; }
-
+    /* --- Base Styles --- */
     body {
       font-family: 'Segoe UI', sans-serif;
       margin: 0; padding: 20px; display: flex; justify-content: center;
@@ -52,16 +36,30 @@
     }
     body.dark .container { background: var(--card-dark); border-color: rgba(255,255,255,0.05); }
 
+    /* --- Animations --- */
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideOut {
+      from { opacity: 1; transform: scale(1); max-height: 100px; margin-bottom: 12px; }
+      to { opacity: 0; transform: scale(0.9); max-height: 0; margin-bottom: 0; padding: 0; overflow: hidden; }
+    }
+
     .input-row { 
       display: flex; flex-wrap: nowrap; gap: 10px; 
       padding: 0 18px 12px; align-items: center;
+      animation: slideIn 0.3s ease forwards;
+    }
+
+    .input-row.removing {
+      animation: slideOut 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+      pointer-events: none;
     }
 
     .row-number {
-      font-weight: bold;
-      min-width: 25px;
-      font-size: 18px;
-      color: var(--primary);
+      font-weight: bold; min-width: 25px; font-size: 18px; color: var(--primary);
     }
 
     input {
@@ -74,27 +72,30 @@
 
     body.dark input { background: #3d3d3d; color: white; border-color: #444; }
     input:focus { border-color: var(--primary); background: #fff; }
+    body.dark input:focus { background: #444; }
 
+    /* --- Buttons --- */
     button { 
       padding: 12px 20px; border: none; border-radius: 15px; 
       background: var(--primary); color: white; font-weight: 700; 
       cursor: pointer; transition: all 0.3s;
       display: flex; align-items: center; justify-content: center;
     }
-    button:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(76, 175, 80, 0.3); }
+    button:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3); }
+    
     button.delete { background: #ff4757; width: 40px; height: 40px; flex-shrink: 0; padding: 0; border-radius: 10px; }
+    button.delete:hover { background: #ff6b81; transform: scale(1.05); }
 
-    /* New Reset Button Style */
-    #resetBtn { 
-      padding: 8px 16px; 
-      font-size: 14px; 
-      background: var(--primary); /* Matching your green sketch */
-      opacity: 0.9;
-    }
+    #resetBtn { padding: 8px 16px; font-size: 14px; background: var(--primary); opacity: 0.9; }
 
+    /* --- Layout Components --- */
+    .header-controls { display: flex; justify-content: flex-end; gap: 12px; margin-bottom: 20px; }
+    .lang-select-wrapper { background: rgba(0,0,0,0.05); padding: 5px 10px; border-radius: 12px; display: flex; align-items: center; }
+    body.dark .lang-select-wrapper { background: rgba(255,255,255,0.1); }
+    
     .tutorial-btn { position: absolute; top: 20px; left: 20px; width: 45px; height: 45px; border-radius: 50%; }
-    .donate-btn { position: fixed; bottom: 30px; right: 30px; padding: 15px 25px; background: linear-gradient(45deg, #FFD700, #FFA500); color: #000; border-radius: 50px; text-decoration: none; z-index: 1000; animation: float 3s ease-in-out infinite; font-weight: bold;}
-    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+    .donate-btn { position: fixed; bottom: 30px; right: 30px; padding: 15px 25px; background: linear-gradient(45deg, #FFD700, #FFA500); color: #000; border-radius: 50px; text-decoration: none; z-index: 1000; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: 0.3s; }
+    .donate-btn:hover { transform: scale(1.05); }
 
     details { margin-bottom: 15px; border-radius: 18px; background: rgba(0,0,0,0.03); overflow: hidden; }
     body.dark details { background: rgba(255,255,255,0.05); }
@@ -106,23 +107,23 @@
     #result { margin-top: 25px; padding: 25px; border-radius: 22px; background: #e8f5e9; transition: 0.3s; }
     body.dark #result { background: #2e2e2e; color: #81c784; }
 
-    #tutorialModal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 2000; align-items: center; justify-content: center; }
-    .modal-content { background: white; padding: 20px; border-radius: 24px; width: 90%; max-width: 600px; position: relative; }
-    body.dark .modal-content { background: #2a2a2a; color: white; }
+    #loader { position: fixed; inset: 0; background: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; transition: opacity 0.6s ease, visibility 0.6s; }
+    body.dark #loader { background: #121212; }
+    .loader-hidden { opacity: 0; visibility: hidden; }
   </style>
 </head>
 <body>
 
   <div id="loader">
-    <div class="spinner"></div>
-    <p style="margin-top:15px; font-weight:bold; color:var(--primary);">Loading...</p>
+    <div style="width: 50px; height: 50px; border: 5px solid rgba(76, 175, 80, 0.1); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite;"></div>
+    <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
   </div>
 
   <div class="container">
-    <button class="tutorial-btn" onclick="openTutorial()">?</button>
+    <button class="tutorial-btn" onclick="alert('Tutorial coming soon!')">?</button>
     
-    <div class="header-controls" style="display: flex; justify-content: flex-end; gap: 12px; margin-bottom: 20px;">
-      <div class="lang-select-wrapper" style="background: rgba(0,0,0,0.05); padding: 5px 10px; border-radius: 12px; display: flex; align-items: center;">
+    <div class="header-controls">
+      <div class="lang-select-wrapper">
         <span style="margin-right: 5px;">🌐</span>
         <select id="langSelect" onchange="switchLang()" style="background:transparent; border:none; outline:none; cursor:pointer; font-weight:bold; color: inherit;">
           <option value="th">ไทย</option>
@@ -170,15 +171,6 @@
     <div id="result"></div>
   </div>
 
-  <div id="tutorialModal" onclick="closeTutorial()">
-    <div class="modal-content" onclick="event.stopPropagation()">
-      <h3 id="tutorialTitle" style="text-align:center;"></h3>
-      <video id="tutVideo" controls style="width:100%; border-radius:15px;">
-        <source src="videos/tutorial.mp4" type="video/mp4">
-      </video>
-    </div>
-  </div>
-
   <a href="https://tmn.app.link/Y5OprkLlj0b" target="_blank" class="donate-btn">
     <span>💎</span><span id="donateText"></span>
   </a>
@@ -187,19 +179,17 @@
     const texts = {
       th: {
         title: "คำนวณต้นทุน", materials: "รายการวัตถุดิบ", laborSection: "ค่าแรง & ค่าใช้จ่าย",
-        workers: "จำนวนคน", wage: "ค่าแรงต่อคน", water: "ค่าน้ำ", electricity: "ค่าไฟ",
         matName: "ชื่อวัตถุดิบ", matQty: "จำนวน", matCost: "ราคา/หน่วย", matProfit: "กำไร/หน่วย",
         addMaterial: "＋ เพิ่มรายการ", labor: "ค่าแรงรวม", material: "ต้นทุนวัตถุดิบ", 
         total: "ต้นทุนสุทธิ", sale: "ราคาขายแนะนำ", calc: "คำนวณต้นทุน ↓", reset: "รีเซ็ต", 
-        darkMode: "🌙 มืด", lightMode: "☀️ สว่าง", autoMode: "🌓 ออโต้", symbol: "฿", symbolBefore: false, empty: "กรุณากรอกข้อมูล", donate: "สนับสนุน", tutTitle: "วิธีใช้งาน"
+        darkMode: "🌙 มืด", lightMode: "☀️ สว่าง", autoMode: "🌓 ออโต้", symbol: "฿", symbolBefore: false, empty: "กรุณากรอกข้อมูล", donate: "สนับสนุน"
       },
       en: {
         title: "Cost Calculator", materials: "Material List", laborSection: "Labor & Expenses",
-        workers: "Workers", wage: "Wage", water: "Water", electricity: "Electricity",
         matName: "Name", matQty: "Qty", matCost: "Cost", matProfit: "Profit",
         addMaterial: "＋ Add Item", labor: "Total Labor", material: "Materials", 
         total: "Net Cost", sale: "Rec. Price", calc: "Calculate ↓", reset: "Reset", 
-        darkMode: "🌙 Dark", lightMode: "☀️ Light", autoMode: "🌓 Auto", symbol: "$", symbolBefore: true, empty: "Enter data", donate: "Donate", tutTitle: "Tutorial"
+        darkMode: "🌙 Dark", lightMode: "☀️ Light", autoMode: "🌓 Auto", symbol: "$", symbolBefore: true, empty: "Enter data", donate: "Donate"
       }
     };
 
@@ -208,28 +198,29 @@
     function applyTheme() {
       const mode = localStorage.getItem("theme") || "auto";
       const isSystemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      const lang = document.getElementById("langSelect").value;
-      const t = texts[lang];
+      const t = texts[document.getElementById("langSelect").value];
       const shouldBeDark = mode === "dark" || (mode === "auto" && isSystemDark);
       document.body.classList.toggle("dark", shouldBeDark);
-      let btnLabel = t.autoMode;
-      if(mode === "dark") btnLabel = t.darkMode;
-      if(mode === "light") btnLabel = t.lightMode;
-      document.getElementById("themeBtn").textContent = btnLabel;
+      document.getElementById("themeBtn").textContent = (mode === "dark" ? t.darkMode : (mode === "light" ? t.lightMode : t.autoMode));
     }
 
     function toggleDarkMode() {
       const modes = ["auto", "dark", "light"];
       let current = localStorage.getItem("theme") || "auto";
-      let nextIndex = (modes.indexOf(current) + 1) % modes.length;
-      localStorage.setItem("theme", modes[nextIndex]);
+      localStorage.setItem("theme", modes[(modes.indexOf(current) + 1) % modes.length]);
       applyTheme();
     }
+
+    // Auto-sync with system theme changes
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+      if (localStorage.getItem("theme") === "auto") applyTheme();
+    });
 
     function switchLang() {
       const lang = document.getElementById("langSelect").value;
       const t = texts[lang];
       localStorage.setItem("lang", lang);
+      
       document.getElementById("title").textContent = t.title;
       document.getElementById("labelMaterial").textContent = t.materials;
       document.getElementById("labelLabor").textContent = t.laborSection;
@@ -241,9 +232,7 @@
       document.querySelectorAll("#materials .input-row").forEach(row => {
         row.querySelector(".mat-name-input").placeholder = t.matName;
         const nums = row.querySelectorAll("input[type='number']");
-        nums[0].placeholder = t.matQty;
-        nums[1].placeholder = t.matCost;
-        nums[2].placeholder = t.matProfit;
+        nums[0].placeholder = t.matQty; nums[1].placeholder = t.matCost; nums[2].placeholder = t.matProfit;
       });
 
       applyTheme();
@@ -251,7 +240,7 @@
     }
 
     function updateNumbers() {
-      const rows = document.querySelectorAll("#materials .input-row");
+      const rows = document.querySelectorAll("#materials .input-row:not(.removing)");
       rows.forEach((row, index) => {
         row.querySelector(".row-number").textContent = (index + 1) + ".";
       });
@@ -277,36 +266,45 @@
     }
 
     function deleteMaterial(id) { 
-      document.getElementById("material-" + id)?.remove(); 
-      updateNumbers();
-      saveData(); 
-      calculate(); 
+      const row = document.getElementById("material-" + id);
+      if (row) {
+        row.classList.add("removing");
+        setTimeout(() => {
+          row.remove();
+          updateNumbers();
+          saveData(); 
+          calculate();
+        }, 400);
+      }
     }
 
     function calculate() {
       const t = texts[document.getElementById("langSelect").value];
       const parse = (id) => parseFloat(document.getElementById(id).value) || 0;
-      const workers = parse("workers"), wage = parse("wage"), water = parse("water"), elec = parse("electricity");
-      let matTotal = 0, profTotal = 0, hasData = (workers > 0 || water > 0 || elec > 0);
-
-      document.querySelectorAll("#materials .input-row").forEach(row => {
+      let matTotal = 0, profTotal = 0;
+      const rows = document.querySelectorAll("#materials .input-row:not(.removing)");
+      
+      rows.forEach(row => {
         const inputs = row.querySelectorAll("input[type='number']");
-        const q = parseFloat(inputs[0].value) || 0, c = parseFloat(inputs[1].value) || 0, p = parseFloat(inputs[2].value) || 0;
-        if (q > 0 || c > 0) hasData = true;
-        matTotal += q * c; profTotal += q * p;
+        const q = parseFloat(inputs[0].value) || 0;
+        matTotal += q * (parseFloat(inputs[1].value) || 0);
+        profTotal += q * (parseFloat(inputs[2].value) || 0);
       });
 
-      if (hasData) {
-        const labor = workers * wage, total = labor + water + elec + matTotal, sale = total + profTotal;
-        const fmt = (num) => t.symbolBefore ? t.symbol + num.toLocaleString() : num.toLocaleString() + " " + t.symbol;
+      const labor = parse("workers") * parse("wage");
+      const totalCost = labor + parse("water") + parse("electricity") + matTotal;
+      const salePrice = totalCost + profTotal;
+      const fmt = (num) => t.symbolBefore ? t.symbol + num.toLocaleString() : num.toLocaleString() + " " + t.symbol;
+
+      if (rows.length > 0 || totalCost > 0) {
         document.getElementById("result").innerHTML = `
           <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
             <span>${t.labor}:</span> <strong>${fmt(labor)}</strong>
             <span>${t.material}:</span> <strong>${fmt(matTotal)}</strong>
-            <span style="border-top:1px solid #ccc; padding-top:5px;">${t.total}:</span> <strong style="border-top:1px solid #ccc; padding-top:5px;">${fmt(total)}</strong>
+            <span style="border-top:1px solid #ccc; padding-top:5px;">${t.total}:</span> <strong style="border-top:1px solid #ccc; padding-top:5px;">${fmt(totalCost)}</strong>
           </div>
           <div style="text-align:center; margin-top:15px; border-top:2px dashed #ccc; padding-top:10px;">
-            <small>${t.sale}</small><br><strong style="font-size:2em; color:var(--primary);">${fmt(sale)}</strong>
+            <small>${t.sale}</small><br><strong style="font-size:2em; color:var(--primary);">${fmt(salePrice)}</strong>
           </div>`;
       } else {
         document.getElementById("result").innerHTML = `<center style="opacity:0.5">${t.empty}</center>`;
@@ -318,7 +316,7 @@
       const data = {
         workers: document.getElementById("workers").value, wage: document.getElementById("wage").value,
         water: document.getElementById("water").value, electricity: document.getElementById("electricity").value,
-        materials: Array.from(document.querySelectorAll("#materials .input-row")).map(r => ({
+        materials: Array.from(document.querySelectorAll("#materials .input-row:not(.removing)")).map(r => ({
           name: r.querySelector(".mat-name-input").value, 
           qty: r.querySelectorAll("input[type='number']")[0].value, 
           cost: r.querySelectorAll("input[type='number']")[1].value, 
@@ -336,14 +334,11 @@
       document.getElementById("water").value = saved.water || "";
       document.getElementById("electricity").value = saved.electricity || "";
       document.getElementById("materials").innerHTML = "";
-      if (saved.materials && saved.materials.length > 0) saved.materials.forEach(m => addMaterial(m.name, m.qty, m.cost, m.profit));
+      if (saved.materials?.length) saved.materials.forEach(m => addMaterial(m.name, m.qty, m.cost, m.profit));
       else addMaterial();
       switchLang();
     }
 
-    function openTutorial() { document.getElementById("tutorialModal").style.display = "flex"; }
-    function closeTutorial() { document.getElementById("tutorialModal").style.display = "none"; }
-    
     function resetAll() { 
       if(confirm("ต้องการรีเซ็ตข้อมูลทั้งหมดหรือไม่? / Clear all data?")) { 
         localStorage.clear(); 
@@ -354,7 +349,7 @@
     window.onload = function() {
       loadData();
       applyTheme();
-      setTimeout(() => { document.getElementById('loader').classList.add('loader-hidden'); }, 500);
+      setTimeout(() => document.getElementById('loader').classList.add('loader-hidden'), 500);
     };
   </script>
 </body>
